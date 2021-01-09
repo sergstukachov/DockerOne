@@ -1,0 +1,68 @@
+version: '3.7'
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/core:/etc/nginx/conf.d
+      - ./nginx/www:/var/www/
+      - ./nginx/logs:/var/log/nginx/
+      - ./nginx/html:/usr/share/nginx/html/
+      - ./nginx/certs:/etc/nginx/certs
+    links:
+      - php
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3309:3306"
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=your_pass*
+      - MYSQL_DATABASE=your_db_name*
+      - MYSQL_USER=root*
+      - MYSQL_PASSWORD=your_pass
+    volumes:
+      - ./mysql:/var/lib/mysql
+
+  php:
+    build: ./php
+    container_name: php-fpm
+    volumes:
+      - ./nginx/www:/var/www
+    links:
+      - mysql
+
+  elasticsearch:
+      image: elasticsearch:7.8.1
+      container_name: elasticsearch
+      ports:
+        - "9200:9200"
+        - "9300:9300"
+      environment:
+        - "discovery.type=single-node"
+
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    restart: always
+    ports:
+      - "9999:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --no-auth -H unix:///var/run/docker.sock
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    environment:
+      - ADMINER_DEFAULT_SERVER=mysql
+    ports:
+      - "8080:8080"
+
+
