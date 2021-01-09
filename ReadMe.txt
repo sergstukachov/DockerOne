@@ -1,3 +1,6 @@
+
+Docker : php-7.4/xdebug-2.9.8/ elasticserch-7.8.1/nginx /mysql-8/ 
+
 1) Git clon your project in dir :
 project_dir/nginx/www/ git clon
 
