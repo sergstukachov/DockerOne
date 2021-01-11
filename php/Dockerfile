@@ -45,9 +45,6 @@ RUN docker-php-ext-install \
   xsl \
   zip
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-ADD php.ini /usr/local/etc/php/conf.d/40-custom.ini
 RUN yes | pecl install xdebug-2.9.8 \
     && docker-php-ext-enable xdebug \
     && echo xdebug.remote_enable=1 >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
@@ -57,6 +54,10 @@ RUN yes | pecl install xdebug-2.9.8 \
     && echo xdebug.remote_connect_back=0 >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo xdebug.idekey=PHPSTORM >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
     && echo xdebug.remote_host=172.17.0.1 >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+ADD php.ini /usr/local/etc/php/conf.d/40-custom.ini
 
 WORKDIR /var/www
 CMD ["php-fpm"]
